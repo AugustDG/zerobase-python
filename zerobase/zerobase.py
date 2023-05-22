@@ -20,7 +20,7 @@ class ZeroBase():
     This class is the base class for all ZeroMQ-based programs for NanoStride. It handles all of the necessary setup and teardown for ZeroMQ, and provides a simple interface for sending and receiving messages.
     """
     
-    def __init__(self, send_addr: str | None = None, recv_addr: str | None = None, send_topic: str = "", recv_topic: str = "", main: Callable[[], bool] | None = None, msg_received: Callable[[Any], None] | None = None, logger: Callable[[Any], None] = print) -> None:
+    def __init__(self, send_addr: str | None = None, recv_addr: str | None = None, send_topic: str = "", recv_topic: str = "", main: Callable[[], bool] | None = None, msg_received: Callable[[str, Any], None] | None = None, logger: Callable[[Any], None] = print) -> None:
         signal.signal(signal.SIGINT, self._signal_handler)
 
         # assign topic properties
@@ -112,12 +112,21 @@ class ZeroBase():
             if self._recv_socket is None:
                 continue
 
-            # manually deserialize the received message (because the first frame is the topic)
-            recv_obj = pickle.loads(self._recv_socket.recv_multipart().pop())
+            # tries to manually deserialize the received message (because the first frame is the topic)
+            try:
+                recv_msg = self._recv_socket.recv_multipart()
+            except:
+                # if the message can't be received, just ignore it
+                continue
+
+            # the first frame is the topic, and the second is the message
+            recv_topic = recv_msg.pop(0).decode("utf-8")
+            recv_obj = recv_msg.pop()
+            recv_obj = pickle.loads(recv_obj)
 
             # call the callback if it exists
             if self._msg_received is not None:
-                self._msg_received(recv_obj)
+                self._msg_received(recv_topic, recv_obj)
 
     # handle OS signals
     def _signal_handler(self, sig, frame) -> None:
