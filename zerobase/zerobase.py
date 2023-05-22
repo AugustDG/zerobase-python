@@ -90,15 +90,9 @@ class ZeroBase():
         self.comms_can_run = False
 
         # wait for the receive loop thread to finish
-        self._receive_loop_thread.join()
+        self._receive_loop_thread.join(timeout=2)
 
-        if self._send_socket is not None:
-            self._send_socket.close()
-
-        if self._recv_socket is not None:
-            self._recv_socket.close()
-
-        self._ctx.term()
+        self._ctx.destroy()
         
     def send(self, msg: Any, topic: str | None = None) -> None:
         """

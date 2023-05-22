@@ -1,7 +1,7 @@
 
 import random
 import time
-from zerobase import ZeroBase
+from zerobase.zerobase import ZeroBase
 
 def main() -> bool:
     print("Main loop running...")
