@@ -14,9 +14,9 @@ Augusto M.P
 ### Installation
 
 1. Download Python3 from your preferred source,
-2. install the necessary dependencies (as indicated in `requirements.txt`),
-3. copy the `zerobase.py` file,
-4. and import the file into your main python file!
+2. Install the necessary dependencies (as indicated in `requirements.txt`),
+3. Copy the `zerobase.py` file,
+4. And import the file into your main python file!
 
 ### How To Use
 
