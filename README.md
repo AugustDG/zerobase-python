@@ -2,7 +2,7 @@
 
 ## Welcome
 
-Hey! Welcome to the first version of ZeroBase, the communications framework for multiprocessing systems!
+Hey! Welcome to the first version of ZeroBase, the communications framework based on [ZeroMQ](https://zeromq.org/) for multiprocessing systems!
 
 This is very much a work in progress, so don't hesitate to create an issue or start a PR!
 
