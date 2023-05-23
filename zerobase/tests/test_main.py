@@ -1,7 +1,7 @@
 
 import random
 import time
-from zerobase.zerobase import ZeroBase, ZeroBasePubConfig, ZeroBaseSubConfig
+from zerobase import ZeroBase, ZeroBasePubConfig, ZeroBaseSubConfig
 
 def main() -> bool:
     print("Main loop running...")
