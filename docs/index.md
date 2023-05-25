@@ -35,9 +35,12 @@ Quick and dirty example on how to use the library (the same one used by the **Qu
 This section is organized by module, and contains a reference page for each module and class in the library.
 
 * [ZeroBase](reference/zerobase.md)
-* [Models](reference/models) 
-  * [ZeroBasePubConfig](reference/models/zerobasepubconfig.md)
-  * [ZeroBaseSubConfig](reference/models/zerobasesubconfig.md)
+* [Configs](reference/configs) 
+  * [ZeroBasePubConfig](reference/configs/zerobasepubconfig.md)
+  * [ZeroBaseSubConfig](reference/configs/zerobasesubconfig.md)
+* [Sockets](reference/sockets)
+  * [ZeroBasePubSocket](reference/sockets/zerobasepubsocket.md)
+  * [ZeroBaseSubSocket](reference/sockets/zerobasesubsocket.md)
 
 ## License
 
