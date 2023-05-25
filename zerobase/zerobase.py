@@ -10,47 +10,12 @@ Not licensed under any license. All rights reserved.
 import pickle
 import sys
 import threading
-from attr import dataclass
 import zmq
 import signal
 
 from typing import Any, Callable, List
-
-@dataclass
-class ZeroBasePubConfig:
-    """
-    This represents the configuration for a ZeroBase publisher socket.
-    """
-
-    addr: str
-
-@dataclass
-class ZeroBaseSubConfig:
-    """
-    This represents the configuration for a ZeroBase subscriber socket.
-    """
-
-    addr: str
-    topics: List[str]
-
-@dataclass
-class ZeroBasePubSocket:
-    """
-    This represents a ZeroBase publisher socket.
-    """
-
-    socket: zmq.Socket
-    config: ZeroBasePubConfig
-
-@dataclass
-class ZeroBaseSubSocket:
-    """
-    This represents a ZeroBase subscriber socket.
-    """
-
-    socket: zmq.Socket
-    config: ZeroBaseSubConfig
-    registered: bool = False
+from .configs import ZeroBasePubConfig, ZeroBaseSubConfig
+from .sockets import ZeroBasePubSocket, ZeroBaseSubSocket
 
 class ZeroBase():
     """
