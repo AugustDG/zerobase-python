@@ -15,7 +15,7 @@ Augusto M.P
 
 ## Getting Started
 
-Below you'll find the necessary information to install and get started with `zerobase`. For in-depth documentation, check out the [docs](https://github.com/Nanostride/zerobase-python/tree/master/docs) folder.
+Below you'll find the necessary information to install and get started with `zerobase`. For in-depth documentation, check out the [docs](docs) folder.
 
 ### Installation
 
