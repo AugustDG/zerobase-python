@@ -4,7 +4,11 @@
 
 Hey! Welcome to ZeroBase, a communications framework based on [ZeroMQ](https://zeromq.org/) for multiprocessing systems!
 
-This is very much a work in progress, so don't hesitate to create an issue or start a PR!
+This is a Python package that provides a base class for building ZeroMQ-based programs for NanoStride. It handles all of the necessary setup and teardown for ZeroMQ, and provides a simple interface for sending and receiving messages. The library is designed to be easy to use and flexible, allowing you to quickly build and deploy ZeroMQ-based programs for a variety of use cases. 
+
+With `zerobase`, you can focus on building the application logic, while the library takes care of the underlying ZeroMQ infrastructure.
+
+That being said, it is still a work in progress, so don't hesitate to create an issue or start a PR!
 
 Yours truly,
 Augusto M.P
