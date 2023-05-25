@@ -10,18 +10,36 @@ With `zerobase`, you can focus on building the application logic, while the libr
 
 That being said, it is still a work in progress, so don't hesitate to create an issue or start a PR!
 
-Yours truly,
+Yours truly, <br>
 Augusto M.P
 
 ## Getting Started
 
+Below you'll find the necessary information to install and get started with `zerobase`. For in-depth documentation, check out the [docs](https://github.com/Nanostride/zerobase-python/tree/master/docs) folder.
+
 ### Installation
 
-1. Download Python3 from your preferred source,
-2. Install the necessary dependencies (as indicated in `requirements.txt`),
-3. Copy the `zerobase/zerobase.py` file,
-4. And import the file into your main python file!
+#### Semi-Automatic Installation (Recommended)
 
-### How To Use
+1. Download Python3 from your preferred source.
+2. Downloading the latest release from the releases page.
+3. Running `pip install <whl_file>`.
 
-_Coming soon..._
+#### Manual Installation
+
+1. Download Python3 from your preferred source.
+2. Install the necessary dependencies (as indicated in `requirements.txt`).
+3. Copy the `zerobase/zerobase.py` file.
+4. And import `zerobase`!
+
+### Quickstart
+
+Once you install the `zerobase` package (by following one of the above methods), take a look at the `tests/test_main.py` file for a great example on how to use the library.
+
+The main function generates random messages and sends them on example topics "A", "B", and "C". The on_msg_received function is called whenever a message is received on one of the subscribed topics, and simply prints out the message and topic.
+
+To customize the code for your own use case, you can modify the main function to generate and send messages on different topics, and modify the `on_msg_received` function to handle incoming messages according to the given topic. You can also modify the `pub_config` and `sub_configs` objects to change the addresses and topics used by the publisher and subscribers.
+
+## License
+
+This project is licensed under the GPLv3 license - see the [LICENSE](LICENSE) file for details.
