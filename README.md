@@ -34,7 +34,7 @@ Below you'll find the necessary information to install and get started with `zer
 
 ### Quickstart
 
-Once you install the `zerobase` package (by following one of the above methods), take a look at the `tests/test_main.py` file for a great example on how to use the library.
+Once you install the `zerobase` package (by following one of the above methods), take a look at [`docs/examples/basic.py`](docs/examples/basic.py) for a basic example on how to use the library.
 
 The main function generates random messages and sends them on example topics "A", "B", and "C". The on_msg_received function is called whenever a message is received on one of the subscribed topics, and simply prints out the message and topic.
 
