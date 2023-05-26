@@ -6,7 +6,7 @@
   - [Table of Contents](#table-of-contents)
   - [Introduction](#introduction)
   - [Usage](#usage)
-    - [Examples](#examples)
+    - [Working Examples](#examples)
   - [API Reference](#api-reference)
   - [License](#license)
 
@@ -18,7 +18,7 @@ This document should serve as a reference for the `zerobase` library. It is inte
 
 For the simplest use case, take a look at the [Quickstart](../README.md#quickstart) section of the README. For more in-depth usage, take a look at the [Examples](#examples) section of this document. And for a complete reference of the library's API, take a look at the [API Reference](#api-reference) section.
 
-### Examples
+### Working Examples
 
 A series of examples to demonstrate how to use the library.
 
