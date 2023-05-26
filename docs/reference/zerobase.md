@@ -12,9 +12,9 @@ Base class for the ZeroBase library. This class is intended to be used directly 
 | --- | --- | --- |
 | pub_config | _[configs.ZeroBasePubConfig](configs/zerobasepubconfig.md)_ | Configuration object for the publisher socket |
 | sub_configs | _[configs.ZeroBaseSubConfig](configs/zerobasesubconfig.md)_ | Configuration objects (if multiple subscriptions) for the subscriber socket |
-| main | _Function_ | Main function to run (will be called in a `while (true)`) |
-| message_received_cb | _Function_ | Callback function to call when a message is received |
-| logger | _Function_ | Logger function to use for logging |
+| main | _Function() -> bool_ | Main function to run (will be called in a `while (true)`, default is None) |
+| message_received_cb | _Function(String, Any) -> None_ | Callback function to call when a message is received (default is None) |
+| logger | _Function(Any) -> None_ | Logger function to use for logging (default is `print`) |
 
 #### Example
 

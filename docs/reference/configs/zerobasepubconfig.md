@@ -10,7 +10,7 @@ This represents the configuration for a ZeroBase publisher socket.
 
 | Parameter | Type | Description |
 | --- | --- | --- |
-| addr | _String_ | Address to connect to, formatted under ZeroMQ specifications |
+| addr | _String_ | Address to bind to, formatted under ZeroMQ specifications |
 
 #### Example
 
