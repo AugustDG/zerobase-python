@@ -22,15 +22,17 @@ Below you'll find the necessary information to install and get started with `zer
 #### Semi-Automatic Installation (Recommended)
 
 1. Download Python3 from your preferred source.
-2. Downloading the latest release from the releases page.
-3. Running `pip install <whl_file>`.
+2. Download the latest ZeroBase release from the releases page.
+3. Run `pip install <whl_file>`.
+4. And import `zerobase` in your python scripts!
 
 #### Manual Installation
 
 1. Download Python3 from your preferred source.
-2. Install the necessary dependencies (as indicated in `requirements.txt`).
-3. Copy the `zerobase/zerobase.py` file.
-4. And import `zerobase`!
+2. Download/clone this repository.
+3. Open a terminal inside of the `zerobase` folder.
+4. Run `pip install .`
+5. And import `zerobase` in your python scripts!
 
 ### Quickstart
 
