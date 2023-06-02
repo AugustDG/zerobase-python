@@ -8,13 +8,14 @@ Base class for the ZeroBase library. This class is intended to be used directly 
 
 #### Parameters
 
-| Parameter | Type | Description |
-| --- | --- | --- |
-| pub_config | _[configs.ZeroBasePubConfig](configs/zerobasepubconfig.md)_ | Configuration object for the publisher socket |
-| sub_configs | _[configs.ZeroBaseSubConfig](configs/zerobasesubconfig.md)_ | Configuration objects (if multiple subscriptions) for the subscriber socket |
-| main | _Function() -> bool_ | Main function to run (will be called in a `while (true)`, default is None) |
-| message_received_cb | _Function(String, Any) -> None_ | Callback function to call when a message is received (default is None) |
-| logger | _Function(Any) -> None_ | Logger function to use for logging (default is `print`) |
+| Parameter        | Type                                                        | Description                                                                                   |
+| ---------------- | ----------------------------------------------------------- | --------------------------------------------------------------------------------------------- |
+| pub_configs      | _[configs.ZeroBasePubConfig](configs/zerobasepubconfig.md)_ | Configuration objects (if multiple addresses) for the publisher socket                        |
+| sub_configs      | _[configs.ZeroBaseSubConfig](configs/zerobasesubconfig.md)_ | Configuration objects (if multiple subscriptions) for the subscriber socket                   |
+| main             | _Function() -> bool_                                        | Main function to run (will be called in a `while (true)`, default is None)                    |
+| terminated       | _Function() -> None_                                        | Callback function to call when the program is terminated (gracefully or not; default is None) |
+| message_received | _Function(String, Any) -> None_                             | Callback function to call when a message is received (default is None)                        |
+| logger           | _Function(Any) -> None_                                     | Logger function to use for logging (default is `print`)                                       |
 
 #### Example
 
@@ -24,9 +25,10 @@ from zerobase import ZeroBase, ZeroBasePubConfig, ZeroBaseSubConfig
 pub_config = ZeroBasePubConfig(addr="tcp://*:5555")
 sub_config = ZeroBaseSubConfig(addr="tcp://localhost:5555", topics=["topic1", "topic2"])
 main = lambda: print("Hello World!")
+on_terminated = lambda: print("Bye World...")
 on_message_received = lambda topic, message: print(f"Received message on topic {topic}: {message}")
 
-zb = ZeroBase(pub_config=pub_config, sub_configs=[sub_config], main=main, message_received_cb=on_message_received, logger=print)
+zb = ZeroBase(pub_configs=[pub_config], sub_configs=[sub_config], main=main, terminated=on_terminated, message_received=on_message_received, logger=print)
 ```
 
 ### ZeroBase.run()
@@ -101,14 +103,14 @@ zb.stop()
 
 ### ZeroBase.send()
 
-Sends a message to the specified topic, through the publisher socket.
+Sends a message to the specified topic, through all the publisher sockets.
 
 #### Parameters
 
-| Parameter | Type | Description |
-| --- | --- | --- |
-| message | _Any_ | Message to send |
-| topic | _String_ | Topic on which to send the message to |
+| Parameter | Type     | Description                           |
+| --------- | -------- | ------------------------------------- |
+| message   | _Any_    | Message to send                       |
+| topic     | _String_ | Topic on which to send the message to |
 
 #### Returns
 
@@ -117,7 +119,7 @@ None
 #### Example
 
 ```python
-[...] # after running class example
+[...] # after running above example
 
 zb.send("Hello World!", "topic1")
 

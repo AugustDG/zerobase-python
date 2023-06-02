@@ -1,4 +1,4 @@
-# Documentation (v0.0.1)
+# Documentation (v0.0.2)
 
 ## Table of Contents
 
@@ -30,17 +30,29 @@ Quick and dirty example on how to use the library (the same one used by the **Qu
 
 ---
 
+[`docs/examples/multi_transport_basic.py`](multi_transport_basic.py)
+
+Very similar to the basic example, but using multiple publisher addresses.
+
+---
+
+[`docs/examples/multi_transport_advanced.py`](multi_transport_advanced.py)
+
+Very similar to both basic examples, but mixing different transports. For IPC and INPROC transports, check out the links in the comments.
+
+---
+
 ## API Reference
 
 This section is organized by module, and contains a reference page for each module and class in the library.
 
-* [ZeroBase](reference/zerobase.md)
-* [Configs](reference/configs) 
-  * [ZeroBasePubConfig](reference/configs/zerobasepubconfig.md)
-  * [ZeroBaseSubConfig](reference/configs/zerobasesubconfig.md)
-* [Sockets](reference/sockets)
-  * [ZeroBasePubSocket](reference/sockets/zerobasepubsocket.md)
-  * [ZeroBaseSubSocket](reference/sockets/zerobasesubsocket.md)
+- [ZeroBase](reference/zerobase.md)
+- [Configs](reference/configs)
+  - [ZeroBasePubConfig](reference/configs/zerobasepubconfig.md)
+  - [ZeroBaseSubConfig](reference/configs/zerobasesubconfig.md)
+- [Sockets](reference/sockets)
+  - [ZeroBasePubSocket](reference/sockets/zerobasepubsocket.md)
+  - [ZeroBaseSubSocket](reference/sockets/zerobasesubsocket.md)
 
 ## License
 
