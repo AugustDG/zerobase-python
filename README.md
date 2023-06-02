@@ -30,7 +30,7 @@ Below you'll find the necessary information to install and get started with `zer
 
 1. Download Python3 from your preferred source.
 2. Download/clone this repository.
-3. Open a terminal inside of the `zerobase` folder.
+3. Open a terminal inside of the repository folder.
 4. Run `pip install .`
 5. And import `zerobase` in your python scripts!
 
