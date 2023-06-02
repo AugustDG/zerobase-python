@@ -26,9 +26,12 @@ def on_terminated():
     print("Program is terminating...")
 
 if __name__ == "__main__":
-    pub_config = ZeroBasePubConfig(addr="tcp://*:5555")
-    sub_config_1 = ZeroBaseSubConfig(addr="tcp://localhost:5555", topics=["A"])
-    sub_config_2 = ZeroBaseSubConfig(addr="tcp://localhost:5555", topics=["B"])
+    pub_config_1 = ZeroBasePubConfig(addr="tcp://*:5555")
+    pub_config_2 = ZeroBasePubConfig(addr="tcp://127.0.0.1:5556")
 
-    base = ZeroBase(pub_configs=[pub_config], sub_configs=[sub_config_1, sub_config_2], main=main, terminated=on_terminated, msg_received=on_msg_received)
+    sub_config_1 = ZeroBaseSubConfig(addr="tcp://127.0.0.1:5555", topics=["A"])
+    sub_config_2 = ZeroBaseSubConfig(addr="tcp://localhost:5555", topics=["B"])
+    sub_config_3 = ZeroBaseSubConfig(addr="tcp://127.0.0.1:5556", topics=["B"])
+
+    base = ZeroBase(pub_configs=[pub_config_1, pub_config_2], sub_configs=[sub_config_1, sub_config_2, sub_config_3], main=main, terminated=on_terminated, msg_received=on_msg_received)
     base.run()
