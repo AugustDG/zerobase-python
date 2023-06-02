@@ -22,11 +22,11 @@ class ZeroBase():
     This is the base class for all ZeroMQ-based programs for NanoStride. It handles all of the necessary setup and teardown for ZeroMQ, and provides a simple interface for sending and receiving messages.
     """
     
-    def __init__(self, pub_config: ZeroBasePubConfig | None, sub_configs: List[ZeroBaseSubConfig] = [], main: Callable[[], bool] | None = None, terminated: Callable | None = None, msg_received: Callable[[str, Any], None] | None = None, logger: Callable[[Any], None] = print) -> None:
+    def __init__(self, pub_configs: List[ZeroBasePubConfig] | None, sub_configs: List[ZeroBaseSubConfig] = [], main: Callable[[], bool] | None = None, terminated: Callable | None = None, msg_received: Callable[[str, Any], None] | None = None, logger: Callable[[Any], None] = print) -> None:
         signal.signal(signal.SIGINT, self._signal_handler)
 
         # assign socket configurations
-        self.pub_config = pub_config
+        self.pub_configs = pub_configs
         self.sub_configs = sub_configs
 
         # assign callback properties
@@ -41,11 +41,11 @@ class ZeroBase():
         self.sub_sockets: List[ZeroBaseSubSocket] = []
     
         # initialize necessary sockets
-        if self.pub_config is not None:
+        for config in self.pub_configs:
             socket = self._ctx.socket(zmq.PUB)
-            socket.bind(self.pub_config.addr)
+            socket.bind(config.addr)
 
-            self.pub_socket = ZeroBasePubSocket(socket, self.pub_config)
+            self.pub_sockets.append(ZeroBasePubSocket(socket, config))
 
         for config in self.sub_configs:
             self.comms_can_run = True
@@ -105,8 +105,9 @@ class ZeroBase():
         
         self.comms_can_run = False
 
-        # wait for the receive loop thread to finish
-        self._receive_loop_thread.join(timeout=2)
+        # wait for the receive loop thread to finish, kill it if it's taking too long
+        if self._receive_loop_thread is not None:
+            self._receive_loop_thread.join(timeout=2)
 
         self._ctx.destroy()
         
@@ -117,10 +118,11 @@ class ZeroBase():
 
         self._logger("Sending message " + str(msg) + " on topic: \"" + topic + "\"")
 
-        # send the message if the socket has been opened
-        if self.pub_socket is not None:
-            self.pub_socket.socket.send(bytes(topic, "utf-8"), zmq.SNDMORE)
-            self.pub_socket.socket.send_pyobj(msg)
+        # send the same message, if the socket has been opened, through all supplied publishers
+        for pub_socket in self.pub_sockets:
+            pub_socket.socket.send(bytes(topic, "utf-8"), zmq.SNDMORE)
+            pub_socket.socket.send_pyobj(msg)
+
 
     # receive a message from the specified topic
     def _receive_loop(self) -> None:
@@ -134,9 +136,9 @@ class ZeroBase():
             poller.register(sub_socket.socket, zmq.POLLIN)
             sub_socket.registered = True
         
-        registered_qty = len(self.sub_sockets)
+        self.registered_sub_qty = len(self.sub_sockets)
 
-        self._logger("Registered sockets: " + str(registered_qty))
+        self._logger("Registered sockets: " + str(self.registered_sub_qty))
         self._logger("ZeroBase receive loop started!")
 
         # run the comms loop
@@ -146,12 +148,12 @@ class ZeroBase():
                 continue
 
             # register any new sockets
-            if registered_qty <= len(self.sub_sockets):
+            if self.registered_sub_qty <= len(self.sub_sockets):
                 for sub_socket in filter(lambda socket: (not socket.registered), self.sub_sockets):
                     poller.register(sub_socket.socket, zmq.POLLIN)
                     sub_socket.registered = True
                 
-                registered_qty = len(self.sub_sockets)
+                self.registered_sub_qty = len(self.sub_sockets)
 
             # poll for any messages
             try:
@@ -162,7 +164,7 @@ class ZeroBase():
                 # if the message can't be received, just ignore it
                 continue
 
-    # processes the poll results
+    # processes the ZMQ polling results
     def _process_poll(self, ready_sockets: dict[Any, int]) -> None:
         for sub_socket in self.sub_sockets:
             # not super sure why I can't use the socket that was returned by the poller, but it doesn't work for some reason
@@ -185,5 +187,7 @@ class ZeroBase():
 
     # handle OS signals
     def _signal_handler(self, sig, frame) -> None:
+        self._logger("Received signal " + str(sig) + ", terminating...")
+
         self.stop()
         sys.exit(sig)
