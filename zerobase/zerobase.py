@@ -22,7 +22,7 @@ class ZeroBase():
     This is the base class for all ZeroMQ-based programs for NanoStride. It handles all of the necessary setup and teardown for ZeroMQ, and provides a simple interface for sending and receiving messages.
     """
     
-    def __init__(self, pub_config: ZeroBasePubConfig | None, sub_configs: List[ZeroBaseSubConfig] = [], main: Callable[[], bool] | None = None, msg_received: Callable[[str, Any], None] | None = None, logger: Callable[[Any], None] = print) -> None:
+    def __init__(self, pub_config: ZeroBasePubConfig | None, sub_configs: List[ZeroBaseSubConfig] = [], main: Callable[[], bool] | None = None, terminated: Callable | None = None, msg_received: Callable[[str, Any], None] | None = None, logger: Callable[[Any], None] = print) -> None:
         signal.signal(signal.SIGINT, self._signal_handler)
 
         # assign socket configurations
@@ -31,6 +31,7 @@ class ZeroBase():
 
         # assign callback properties
         self._main = main
+        self._terminated = terminated
         self._logger = logger
         self._msg_received = msg_received
 
@@ -94,6 +95,11 @@ class ZeroBase():
         """
         Stops and cleans up this instance. Must be called before the program exits!
         """
+
+        # call the terminated callback if it exists
+        if self._terminated is not None:
+            self._logger("Invoking terminated callback...")
+            self._terminated()
 
         self._logger("Stopping ZeroBase...")
         
