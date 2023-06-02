@@ -8,10 +8,10 @@ This represents a ZeroBase publisher socket. This object shouldn't be created di
 
 #### Parameters
 
-| Parameter | Type | Description |
-| --- | --- | --- |
-| socket | _zmq.Socket_ | The ZeroMQ socket to use for this instance |
-| config | _[configs.ZeroBasePubConfig](../configs/zerobasepubconfig.md)_ | Configuration for this socket |
+| Parameter | Type                                                           | Description                                |
+| --------- | -------------------------------------------------------------- | ------------------------------------------ |
+| socket    | _zmq.Socket_                                                   | The ZeroMQ socket to use for this instance |
+| config    | _[configs.ZeroBasePubConfig](../configs/zerobasepubconfig.md)_ | Configuration for this socket              |
 
 #### Example
 

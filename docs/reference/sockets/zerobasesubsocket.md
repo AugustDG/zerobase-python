@@ -8,10 +8,10 @@ This represents a ZeroBase subscriber socket. This object shouldn't be created d
 
 #### Parameters
 
-| Parameter | Type | Description |
-| --- | --- | --- |
-| socket | _zmq.Socket_ | The ZeroMQ socket to use for this instance |
-| config | _[configs.ZeroBaseSubConfig](../configs/zerobasesubconfig.md)_ | Configuration for this socket |
+| Parameter | Type                                                           | Description                                |
+| --------- | -------------------------------------------------------------- | ------------------------------------------ |
+| socket    | _zmq.Socket_                                                   | The ZeroMQ socket to use for this instance |
+| config    | _[configs.ZeroBaseSubConfig](../configs/zerobasesubconfig.md)_ | Configuration for this socket              |
 
 #### Example
 
