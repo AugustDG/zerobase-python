@@ -7,13 +7,13 @@ def main() -> bool:
     print("Main loop running...")
 
     msg = str((random.randint(1, 100), random.randint(1, 100)))
-    base.send(msg, "A")
+    base.send(topic="A", msg=msg)
 
     msg = str((random.randint(1, 100), random.randint(1, 100)))
-    base.send(msg, "B")
+    base.send(topic="B", msg=msg)
 
     msg = str((random.randint(1, 100), random.randint(1, 100)))
-    base.send(msg, "C")
+    base.send(topic="C", msg=msg)
 
     time.sleep(random.randint(1, 3))
 
