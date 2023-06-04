@@ -35,6 +35,8 @@ class ZeroBase():
         self._logger = logger
         self._msg_received = msg_received
 
+        self.comms_can_run = False
+
         # initializes sockets and ZMQ properties
         self.init()
     
