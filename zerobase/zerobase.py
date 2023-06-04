@@ -35,21 +35,32 @@ class ZeroBase():
         self._logger = logger
         self._msg_received = msg_received
 
-        # initialize ZMQ properties
+        # initializes sockets and ZMQ properties
+        self.init()
+    
+
+    def init(self) -> None:
+        """ 
+        Initializes the ZeroBase instance. Must be called before anything else!
+        """
+
+        if (self.comms_can_run):
+            return;
+    
+        # initialize ZMQ & ZeroBase properties
         self._ctx = zmq.Context()
         self.pub_sockets: List[ZeroBasePubSocket] = []
         self.sub_sockets: List[ZeroBaseSubSocket] = []
-    
-        # initialize necessary sockets
+
+        # initialize PUB sockets
         for config in self.pub_configs:
             socket = self._ctx.socket(zmq.PUB)
             socket.bind(config.addr)
 
             self.pub_sockets.append(ZeroBasePubSocket(socket, config))
 
+        # initialize SUB sockets
         for config in self.sub_configs:
-            self.comms_can_run = True
-
             socket = self._ctx.socket(zmq.SUB)
             socket.connect(config.addr)
 
@@ -57,6 +68,8 @@ class ZeroBase():
                 socket.setsockopt_string(zmq.SUBSCRIBE, topic)
             
             self.sub_sockets.append(ZeroBaseSubSocket(socket, config))
+        
+        self.comms_can_run = True
 
 
     def run(self) -> None:
@@ -81,12 +94,15 @@ class ZeroBase():
     
     def start(self) -> None:
         """
-        Starts this instance's necessary threads. Must be called before sending or receiving messages.
+        Starts this instance's necessary threads. Must be called before receiving messages.
         """
+
+        if not self.comms_can_run:
+            raise Exception("ZeroBase instance is not initialized! Call init() before starting!")
 
         self._logger("Starting ZeroBase...")
         
-        # start the receive loop thread
+        # start the communication loop thread
         self._receive_loop_thread = threading.Thread(target=self._receive_loop)
         self._receive_loop_thread.start()
         
@@ -109,12 +125,18 @@ class ZeroBase():
         if self._receive_loop_thread is not None:
             self._receive_loop_thread.join(timeout=2)
 
+        self.pub_sockets.clear()
+        self.sub_sockets.clear()
+
         self._ctx.destroy()
         
-    def send(self, msg: Any, topic: str) -> None:
+    def send(self, topic: str, msg: Any) -> None:
         """
         Sends a message to the specified topic.
         """
+
+        if not self.comms_can_run:
+            raise Exception("Comms are not running! Call init() before sending messages!")
 
         self._logger("Sending message " + str(msg) + " on topic: \"" + topic + "\"")
 
@@ -144,7 +166,7 @@ class ZeroBase():
         # run the comms loop
         while self.comms_can_run:
             # check if any sockets have been registered (otherwise, there's no point in trying to receive messages)
-            if len(self.sub_sockets) == 0:
+            if len(poller.sockets) == 0:
                 continue
 
             # register any new sockets
