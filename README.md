@@ -23,16 +23,19 @@ Below you'll find the necessary information to install and get started with `zer
 
 1. Download Python3 from your preferred source.
 2. Download the latest ZeroBase release from the releases page.
-3. Run `pip install <whl_file>`.
-4. And import `zerobase` in your python scripts!
+3. Download the latest `requirements.txt` from the releases page.
+4. Run `pip install -r <requirements_file>`.
+5. Run `pip install <whl_file>`.
+6. And import `zerobase` in your python scripts!
 
 #### Manual Installation
 
 1. Download Python3 from your preferred source.
 2. Download/clone this repository.
 3. Open a terminal inside of the repository folder.
-4. Run `pip install .`
-5. And import `zerobase` in your python scripts!
+4. Run `pip install -r <requirements_file>`.
+5. Run `pip install .`
+6. And import `zerobase` in your python scripts!
 
 ### Quickstart
 
