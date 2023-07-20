@@ -21,7 +21,7 @@ Below you'll find the necessary information to install and get started with `zer
 
 #### Semi-Automatic Installation (Recommended)
 
-1. Download Python3 from your preferred source.
+1. Download Python3.10 from your preferred source.
 2. Download the latest ZeroBase release from the releases page.
 3. Download the latest `requirements.txt` from the releases page.
 4. Run `pip install -r <requirements_file>`.
@@ -30,7 +30,7 @@ Below you'll find the necessary information to install and get started with `zer
 
 #### Manual Installation
 
-1. Download Python3 from your preferred source.
+1. Download Python3.10 from your preferred source.
 2. Download/clone this repository.
 3. Open a terminal inside of the repository folder.
 4. Run `pip install -r <requirements_file>`.

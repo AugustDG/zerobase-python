@@ -34,4 +34,6 @@ if __name__ == "__main__":
     sub_config_3 = ZeroBaseSubConfig(addr="tcp://127.0.0.1:5556", topics=["B"])
 
     base = ZeroBase(pub_configs=[pub_config_1, pub_config_2], sub_configs=[sub_config_1, sub_config_2, sub_config_3], main=main, terminated=on_terminated, msg_received=on_msg_received)
+    base.init()
+    
     base.run()

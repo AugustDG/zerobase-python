@@ -47,4 +47,6 @@ if __name__ == "__main__":
     sub_config_4 = ZeroBaseSubConfig(addr="inproc://test", topics=["A", "B"]) 
 
     base = ZeroBase(pub_configs=[pub_config_1, pub_config_2, pub_config_4], sub_configs=[sub_config_1, sub_config_2, sub_config_4], main=main, terminated=on_terminated, msg_received=on_msg_received)
+    base.init()
+    
     base.run()

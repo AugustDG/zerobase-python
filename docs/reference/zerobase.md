@@ -31,6 +31,26 @@ on_message_received = lambda topic, message: print(f"Received message on topic {
 zb = ZeroBase(pub_configs=[pub_config], sub_configs=[sub_config], main=main, terminated=on_terminated, message_received=on_message_received, logger=print)
 ```
 
+### ZeroBase.init()
+
+Initializes the ZeroBase instance. Must be called before anything else!
+
+#### Parameters
+
+None
+
+#### Returns
+
+None
+
+#### Example
+
+```python
+[...] # after running above example
+
+zb.init()
+```
+
 ### ZeroBase.run()
 
 This function is the main entry point for the ZeroBase class (and it should be for the program as well)! It will assume that this is the main thread and run the flow in the appropriate order.
@@ -55,7 +75,7 @@ zb.run() # call is blocking, will run until the program is stopped
 
 ### ZeroBase.start()
 
-Starts this ZeroBase instance's necessary threads. Must be called before sending or receiving messages.
+Starts this ZeroBase instance's necessary threads. Must be called before receiving messages.
 
 #### Parameters
 
@@ -109,8 +129,8 @@ Sends a message to the specified topic, through all the publisher sockets.
 
 | Parameter | Type     | Description                           |
 | --------- | -------- | ------------------------------------- |
-| message   | _Any_    | Message to send                       |
 | topic     | _String_ | Topic on which to send the message to |
+| message   | _Any_    | Message to send                       |
 
 #### Returns
 
@@ -121,13 +141,13 @@ None
 ```python
 [...] # after running above example
 
-zb.send("Hello World!", "topic1")
+zb.send("topic1", "Hello World!")
 
 # or
 
-zb.send("Hello World!", "topic3")
+zb.send("topic3", "Hello World!")
 
 # or
 
-zb.send("Hello World!", "topic/porkchop")
+zb.send("topic/porkchop", "Hello World!")
 ```

@@ -1,19 +1,19 @@
 [build-system]
-requires = ["setuptools>=61.0", "pyzmq>=25.0.0"]
+requires = ["setuptools>=61.0", "pyzmq>=25.0.0", "attrs>=22.0.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "zerobase"
-version = "0.0.2"
+version = "0.0.4"
 authors = [
   { name="Augusto Mota Pinheiro", email="augustomp55@gmail.com" },
 ]
 description = "A communications framework based on ZeroMQ for multiprocessing systems!"
 readme = "README.md"
-requires-python = ">=3.7"
+requires-python = ">=3.10"
 classifiers = [
     "Programming Language :: Python :: 3",
-    "License :: OSI Approved :: MIT License",
+    "License :: OSI Approved :: GPLv3 License",
     "Operating System :: OS Independent",
 ]
 
