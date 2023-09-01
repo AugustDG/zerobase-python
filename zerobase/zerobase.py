@@ -35,7 +35,7 @@ class ZeroBase():
         self._logger = logger
         self._msg_received = msg_received
 
-        self.comms_can_run = False
+        self.has_init = False
 
         # initializes sockets and ZMQ properties
         self.init()
@@ -46,7 +46,7 @@ class ZeroBase():
         Initializes the ZeroBase instance. Must be called before anything else!
         """
 
-        if (self.comms_can_run):
+        if (self.has_init):
             return;
     
         # initialize ZMQ & ZeroBase properties
@@ -71,7 +71,7 @@ class ZeroBase():
             
             self.sub_sockets.append(ZeroBaseSubSocket(socket, config))
         
-        self.comms_can_run = True
+        self.has_init = True
 
 
     def run(self) -> None:
@@ -99,7 +99,7 @@ class ZeroBase():
         Starts this instance's necessary threads. Must be called before receiving messages.
         """
 
-        if not self.comms_can_run:
+        if not self.has_init:
             raise Exception("ZeroBase instance is not initialized! Call init() before starting!")
 
         self._logger("Starting ZeroBase...")
@@ -121,7 +121,7 @@ class ZeroBase():
 
         self._logger("Stopping ZeroBase...")
         
-        self.comms_can_run = False
+        self.has_init = False
 
         # wait for the receive loop thread to finish, kill it if it's taking too long
         if self._receive_loop_thread is not None:
@@ -137,7 +137,7 @@ class ZeroBase():
         Sends a message to the specified topic.
         """
 
-        if not self.comms_can_run:
+        if not self.has_init:
             raise Exception("Comms are not running! Call init() before sending messages!")
 
         self._logger("Sending message " + str(msg) + " on topic: \"" + topic + "\"")
@@ -166,7 +166,7 @@ class ZeroBase():
         self._logger("ZeroBase receive loop started!")
 
         # run the comms loop
-        while self.comms_can_run:
+        while self.has_init:
             # check if any sockets have been registered (otherwise, there's no point in trying to receive messages)
             if len(poller.sockets) == 0:
                 continue
