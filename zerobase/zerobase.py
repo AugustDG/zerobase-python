@@ -17,11 +17,12 @@ from typing import Any, Callable, List
 from .configs import ZeroBasePubConfig, ZeroBaseSubConfig
 from .sockets import ZeroBasePubSocket, ZeroBaseSubSocket
 
+
 class ZeroBase():
     """
     This is the base class for all ZeroMQ-based programs for NanoStride. It handles all of the necessary setup and teardown for ZeroMQ, and provides a simple interface for sending and receiving messages.
     """
-    
+
     def __init__(self, pub_configs: List[ZeroBasePubConfig] | None, sub_configs: List[ZeroBaseSubConfig] = [], main: Callable[[], bool] | None = None, terminated: Callable | None = None, msg_received: Callable[[str, Any], None] | None = None, logger: Callable[[Any], None] = print) -> None:
         signal.signal(signal.SIGINT, self._signal_handler)
 
@@ -37,18 +38,16 @@ class ZeroBase():
 
         self.has_init = False
 
-        # initializes sockets and ZMQ properties
-        self.init()
-    
-
     def init(self) -> None:
         """ 
         Initializes the ZeroBase instance. Must be called before anything else!
         """
 
         if (self.has_init):
-            return;
-    
+            return
+
+        self._logger("Initializing ZeroBase...")
+
         # initialize ZMQ & ZeroBase properties
         self._ctx = zmq.Context()
         self.pub_sockets: List[ZeroBasePubSocket] = []
@@ -68,11 +67,14 @@ class ZeroBase():
 
             for topic in config.topics:
                 socket.setsockopt_string(zmq.SUBSCRIBE, topic)
-            
-            self.sub_sockets.append(ZeroBaseSubSocket(socket, config))
-        
-        self.has_init = True
 
+            self.sub_sockets.append(ZeroBaseSubSocket(socket, config))
+
+        # start the communication loop thread
+        self._receive_loop_thread = threading.Thread(target=self._receive_loop)
+        self._receive_loop_thread.start()
+
+        self.has_init = True
 
     def run(self) -> None:
         """ 
@@ -83,33 +85,15 @@ class ZeroBase():
 
         if self._main is None:
             return
-        
-        self.start()
 
         # run the main loop until it returns false (indicating that the program should stop)
         while True:
             if not self._main():
                 break
 
-        self.stop()
+        self.uninit()
 
-    
-    def start(self) -> None:
-        """
-        Starts this instance's necessary threads. Must be called before receiving messages.
-        """
-
-        if not self.has_init:
-            raise Exception("ZeroBase instance is not initialized! Call init() before starting!")
-
-        self._logger("Starting ZeroBase...")
-        
-        # start the communication loop thread
-        self._receive_loop_thread = threading.Thread(target=self._receive_loop)
-        self._receive_loop_thread.start()
-        
-
-    def stop(self) -> None:
+    def uninit(self) -> None:
         """
         Stops and cleans up this instance. Must be called before the program exits!
         """
@@ -120,7 +104,7 @@ class ZeroBase():
             self._terminated()
 
         self._logger("Stopping ZeroBase...")
-        
+
         self.has_init = False
 
         # wait for the receive loop thread to finish, kill it if it's taking too long
@@ -131,35 +115,38 @@ class ZeroBase():
         self.sub_sockets.clear()
 
         self._ctx.destroy()
-        
+
     def send(self, topic: str, msg: Any) -> None:
         """
         Sends a message to the specified topic.
         """
 
         if not self.has_init:
-            raise Exception("Comms are not running! Call init() before sending messages!")
+            raise Exception(
+                "Comms are not running! Call init() before sending messages!")
 
-        self._logger("Sending message " + str(msg) + " on topic: \"" + topic + "\"")
+        self._logger("Sending message " + str(msg) +
+                     " on topic: \"" + topic + "\"")
 
         # send the same message, if the socket has been opened, through all supplied publishers
         for pub_socket in self.pub_sockets:
             pub_socket.socket.send(bytes(topic, "utf-8"), zmq.SNDMORE)
             pub_socket.socket.send_pyobj(msg)
 
-
     # receive a message from the specified topic
+
     def _receive_loop(self) -> None:
         poller = zmq.Poller()
 
         self._logger("Registering sockets...")
 
         for sub_socket in self.sub_sockets:
-            self._logger("Registering sub socket on address " + sub_socket.config.addr + " with topics: " + str(sub_socket.config.topics))
-            
+            self._logger("Registering sub socket on address " + sub_socket.config.addr +
+                         " with topics: " + str(sub_socket.config.topics))
+
             poller.register(sub_socket.socket, zmq.POLLIN)
             sub_socket.registered = True
-        
+
         self.registered_sub_qty = len(self.sub_sockets)
 
         self._logger("Registered sockets: " + str(self.registered_sub_qty))
@@ -176,13 +163,13 @@ class ZeroBase():
                 for sub_socket in filter(lambda socket: (not socket.registered), self.sub_sockets):
                     poller.register(sub_socket.socket, zmq.POLLIN)
                     sub_socket.registered = True
-                
+
                 self.registered_sub_qty = len(self.sub_sockets)
 
             # poll for any messages
             try:
                 ready_sockets = dict(poller.poll())
-                
+
                 self._process_poll(ready_sockets)
             except:
                 # if the message can't be received, just ignore it
@@ -208,10 +195,10 @@ class ZeroBase():
             if self._msg_received is not None:
                 self._msg_received(recv_topic, recv_obj)
 
-
     # handle OS signals
+
     def _signal_handler(self, sig, frame) -> None:
         self._logger("Received signal " + str(sig) + ", terminating...")
 
-        self.stop()
+        self.uninit()
         sys.exit(sig)

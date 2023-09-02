@@ -73,31 +73,7 @@ None
 zb.run() # call is blocking, will run until the program is stopped
 ```
 
-### ZeroBase.start()
-
-Starts this ZeroBase instance's necessary threads. Must be called before receiving messages.
-
-#### Parameters
-
-None
-
-#### Returns
-
-None
-
-#### Example
-
-```python
-[...] # after running class example, instead of calling run()
-
-zb.start()
-
-[...] # main loop
-
-zb.stop()
-```
-
-### ZeroBase.stop()
+### ZeroBase.uninit()
 
 Stops and cleans up this instance. Must be called before the program exits (automatically called if the system kills this process).
 
@@ -114,11 +90,11 @@ None
 ```python
 [...] # after running class example, instead of calling run()
 
-zb.start()
+zb.init()
 
 [...] # main loop
 
-zb.stop()
+zb.uninit()
 ```
 
 ### ZeroBase.send()
