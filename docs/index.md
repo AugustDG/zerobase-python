@@ -1,4 +1,4 @@
-# Documentation (v0.0.5)
+# Documentation (v0.6.0)
 
 ## Table of Contents
 

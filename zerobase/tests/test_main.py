@@ -26,7 +26,7 @@ def on_msg_received(topic, msg):
 
 
 def on_terminated():
-    print("Program is terminating...")
+    print("Program has terminated!")
 
 
 if __name__ == "__main__":
@@ -34,7 +34,7 @@ if __name__ == "__main__":
     sub_config_1 = ZeroBaseSubConfig(addr="tcp://localhost:5555", topics=["A"])
     sub_config_2 = ZeroBaseSubConfig(addr="tcp://localhost:5555", topics=["B"])
 
-    base = ZeroBase(pub_configs=[pub_config], sub_configs=[
-                    sub_config_1, sub_config_2], main=main, terminated=on_terminated, msg_received=on_msg_received)
-    base.init()
-    base.run()
+    base = ZeroBase(main=main, msg_received=on_msg_received)
+    base.init(pub_configs=[pub_config], sub_configs=[sub_config_1, sub_config_2])
+
+    on_terminated()

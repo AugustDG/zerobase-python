@@ -4,7 +4,7 @@ Date: 22/05/2023
 Description: This file contains the ZeroBase class, which is the base class for all ZeroMQ-based programs for NanoStride. It handles all of the necessary setup and teardown for ZeroMQ, and provides a simple interface for sending and receiving messages.
 
 Copyright 2023, NanoStride
-Not licensed under any license. All rights reserved.
+GPLv3 License. All rights reserved.
 """
 
 import pickle
@@ -23,27 +23,20 @@ class ZeroBase():
     This is the base class for all ZeroMQ-based programs for NanoStride. It handles all of the necessary setup and teardown for ZeroMQ, and provides a simple interface for sending and receiving messages.
     """
 
-    def __init__(self, pub_configs: List[ZeroBasePubConfig] | None, sub_configs: List[ZeroBaseSubConfig] = [], main: Callable[[], bool] | None = None, terminated: Callable | None = None, msg_received: Callable[[str, Any], None] | None = None, logger: Callable[[Any], None] = print) -> None:
-        signal.signal(signal.SIGINT, self._signal_handler)
-
-        # assign socket configurations
-        self.pub_configs = pub_configs
-        self.sub_configs = sub_configs
-
+    def __init__(self, main: Callable[[], bool], msg_received: Callable[[str, Any], None], logger: Callable[[Any], None] = print) -> None:
         # assign callback properties
         self._main = main
-        self._terminated = terminated
         self._logger = logger
         self._msg_received = msg_received
 
         self.has_init = False
 
-    def init(self) -> None:
+    def init(self, pub_configs: List[ZeroBasePubConfig] | None, sub_configs: List[ZeroBaseSubConfig] = []) -> None:
         """ 
         Initializes the ZeroBase instance. Must be called before anything else!
         """
 
-        if (self.has_init):
+        if self.has_init:
             return
 
         self._logger("Initializing ZeroBase...")
@@ -54,14 +47,14 @@ class ZeroBase():
         self.sub_sockets: List[ZeroBaseSubSocket] = []
 
         # initialize PUB sockets
-        for config in self.pub_configs:
+        for config in pub_configs:
             socket = self._ctx.socket(zmq.PUB)
             socket.bind(config.addr)
 
             self.pub_sockets.append(ZeroBasePubSocket(socket, config))
 
         # initialize SUB sockets
-        for config in self.sub_configs:
+        for config in sub_configs:
             socket = self._ctx.socket(zmq.SUB)
             socket.connect(config.addr)
 
@@ -86,8 +79,8 @@ class ZeroBase():
         if self._main is None:
             return
 
-        # run the main loop until it returns false (indicating that the program should stop)
-        while True:
+        # run the main loop until it returns false (indicating that the program should stop) or the program is terminated
+        while self.has_init:
             if not self._main():
                 break
 
@@ -98,10 +91,8 @@ class ZeroBase():
         Stops and cleans up this instance. Must be called before the program exits!
         """
 
-        # call the terminated callback if it exists
-        if self._terminated is not None:
-            self._logger("Invoking terminated callback...")
-            self._terminated()
+        if not self.has_init:
+            return
 
         self._logger("Stopping ZeroBase...")
 
@@ -110,6 +101,12 @@ class ZeroBase():
         # wait for the receive loop thread to finish, kill it if it's taking too long
         if self._receive_loop_thread is not None:
             self._receive_loop_thread.join(timeout=2)
+        
+        for pub_socket in self.pub_sockets:
+            pub_socket.socket.close()
+
+        for sub_socket in self.sub_sockets:
+            sub_socket.socket.close()
 
         self.pub_sockets.clear()
         self.sub_sockets.clear()
@@ -122,11 +119,9 @@ class ZeroBase():
         """
 
         if not self.has_init:
-            raise Exception(
-                "Comms are not running! Call init() before sending messages!")
+            return
 
-        self._logger("Sending message " + str(msg) +
-                     " on topic: \"" + topic + "\"")
+        self._logger("Sending message " + str(msg) + " on topic: \"" + topic + "\"")
 
         # send the same message, if the socket has been opened, through all supplied publishers
         for pub_socket in self.pub_sockets:
@@ -192,13 +187,4 @@ class ZeroBase():
             recv_obj = pickle.loads(recv_obj)
 
             # call the callback if it exists
-            if self._msg_received is not None:
-                self._msg_received(recv_topic, recv_obj)
-
-    # handle OS signals
-
-    def _signal_handler(self, sig, frame) -> None:
-        self._logger("Received signal " + str(sig) + ", terminating...")
-
-        self.uninit()
-        sys.exit(sig)
+            self._msg_received(recv_topic, recv_obj)
